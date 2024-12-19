@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ member.username }} Profile</h1>
+<div>
+{% if request.user != member %}
+    <form action="{% url "users:follow" member.pk %}" method="POST">
+      {% csrf_token %}
+
+      {% if request.user in member.followers.all %}
+          <input type="submit" value="Unfollow">
+      {% else %}
+          <input type="submit" value="Follow">
+      {% endif %}
+    </form>
+{% endif %}
+</div>
+{% comment %} <a href= '/index/' >돌아가기</a> {% endcomment %}
+{% endblock content %}
