@@ -8,3 +8,7 @@ urlpatterns = [
 urlpatterns += [
   path('users/', include('users.urls'))
 ]
+
+urlpatterns += [
+  path('home/', include('homepage.urls'))
+]
