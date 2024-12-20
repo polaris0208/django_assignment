@@ -12,3 +12,7 @@ urlpatterns += [
 urlpatterns += [
   path('home/', include('homepage.urls'))
 ]
+
+urlpatterns += [
+  path('accounts/', include('accounts.urls'))
+]
