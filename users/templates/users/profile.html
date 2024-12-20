@@ -14,6 +14,19 @@
       {% endif %}
     </form>
 {% endif %}
+
+{% if request.user == member %}
+
+<a href = "{% url "accounts:update" %}">
+    <p>Upadate</p>
+</a>
+
+<form action="{% url "accounts:resign" %}" method="POST">
+    {% csrf_token %}
+    <input type="submit" value="Resign">
+</form>
+{% endif %}
+
 </div>
 {% comment %} <a href= '/index/' >돌아가기</a> {% endcomment %}
 {% endblock content %}
