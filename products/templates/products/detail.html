@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Products Detail</h1>
+<h3>[{{ products.pk }}] {{ products.title }}</h3>
+<p> {{ products.author.username }}
+<p>{{ products.product_name }}</p>
+<p>{{ products.price }}</p>
+<p>{{ products.quantity }}</p>
+<p>{{ products.like_user.all | length }}</p>
+
+<br><hr>
+
+{% if products.image %}
+    <img src="{{ products.image.url }}">
+{% endif %}
+
+<p>{{ products.content }}</p>
+<p>{{ products.created_at }}</p>
+
+{% if user == products.author  %}
+<a href="{% url 'products:products' %}"><h2>목록으로</h2></a>
+<a href="{% url 'products:update' products.pk %}"><h2>수정하기</h2></a>
+<form action="{% url 'products:delete' products.pk %}" method='POST'>
+  {% csrf_token %}
+  <input type="submit" value="삭제">
+</form>
+{% endif %}
+
+
+<br><hr>
+<h3>Comments {{ comments|length }} </h3>
+
+{% if request.user.is_authenticated  %}
+<form action="{% url "products:comment_create" products.pk %}" method="POST">
+  {% csrf_token %}
+  {{ comment_form.as_p }}
+  <input type="submit" value="Comments">
+</form>
+<br><hr>
+{% endif %}
+
+
+{%  for comment in comments %}
+<ul>
+  <li>{{ comment.user.username }} | {{ comment.created_at }}</li>
+  <p>{{ comment.content }}</p>
+
+  {% if user == comment.user %}
+  <form action="{% url "products:comment_delete" products.pk comment.pk%}" method="POST">
+    {% csrf_token %}
+    <input type="submit" value="삭제">
+  </form>
+  {% endif %}
+
+</ul>
+{% endfor %}
+
+{% endblock content %}

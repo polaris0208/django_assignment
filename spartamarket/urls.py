@@ -16,3 +16,7 @@ urlpatterns += [
 urlpatterns += [
   path('accounts/', include('accounts.urls'))
 ]
+
+urlpatterns += [
+  path('products/', include('products.urls'))
+]
