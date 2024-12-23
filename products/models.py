@@ -2,6 +2,13 @@ from django.db import models
 from django.conf import settings
 
 
+class Hashtag(models.Model):
+    content = models.TextField(unique=True)  # 중복 방지
+
+    def __str__(self):
+        return self.content
+
+
 class Products(models.Model):
     # 제목
     title = models.CharField(max_length=50)
@@ -22,6 +29,9 @@ class Products(models.Model):
         related_name="like_products",
     )
 
+    # 해쉬태그
+    hashtags = models.ManyToManyField(Hashtag, blank=True)
+
     def __str__(self):
         return self.title
 
@@ -36,7 +46,9 @@ class Comment(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     #
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="comments"
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="comments"
     )
 
     def __str__(self):

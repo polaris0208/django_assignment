@@ -1,4 +1,8 @@
 {% extends 'base.html' %}
+
+{% load make_link %} 
+{% comment %} 태그 링크 불러오기 {% endcomment %}
+
 {% block content %}
 <h1>Products Detail</h1>
 <h3>[{{ products.pk }}] {{ products.title }}</h3>
@@ -14,7 +18,8 @@
     <img src="{{ products.image.url }}">
 {% endif %}
 
-<p>{{ products.content }}</p>
+{% comment %} <p>{{ products.content }}</p> {% endcomment %}
+<p>{{ products|hashtag_link|safe }}</p>
 <p>{{ products.created_at }}</p>
 
 {% if user == products.author  %}

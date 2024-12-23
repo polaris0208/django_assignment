@@ -19,3 +19,7 @@ urlpatterns += [
         name="comment_delete",
     ),
 ]
+
+urlpatterns += [
+    path("<int:hash_pk>/hashtag/", views.hashtag, name="hashtag"),
+]
