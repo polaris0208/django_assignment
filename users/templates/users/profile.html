@@ -2,7 +2,10 @@
 
 {% block content %}
 <h1>{{ member.username }} Profile</h1>
-<div>
+<img src="{{ member.profile_image.url }}" width="150" height="150">
+<p>가입일: {{ member.date_joined|date:"Y-m-d" }}</p>
+<p>팔로워: {{ follower_count }}명 / 팔로잉: {{ following_count }}명</p>
+
 {% if request.user != member %}
     <form action="{% url "users:follow" member.pk %}" method="POST">
       {% csrf_token %}
@@ -27,6 +30,16 @@
 </form>
 {% endif %}
 
+<br><hr>
+
+<div>
+<h2>Cart</h2>
+{% for product in liked_products %}
+<a href="{% url "products:detail" product.pk %}">
+    <p>{{ product.title }}</p>
+{% endfor %}
+
 </div>
+
 {% comment %} <a href= '/index/' >돌아가기</a> {% endcomment %}
 {% endblock content %}
