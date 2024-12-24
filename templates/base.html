@@ -9,11 +9,18 @@
   {% block header %}{% endblock header %}
 </head>
 <body>
-  <div class="navbar">
+  <div class="navbar" style="display: flex; gap: 20px;">
 
     <a href= "{% url "homepage:homepage" %}">
       <p>Home</p>
     </a>
+
+    <a href="{% url "products:products" %}">
+      <p>Products</p>
+
+    {% comment %} <a href= "{% url "products:search" %}">
+      <p>Search</p>
+    </a> {% endcomment %}
 
     {% if request.user.is_authenticated %}
 
