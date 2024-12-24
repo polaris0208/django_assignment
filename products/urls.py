@@ -23,3 +23,7 @@ urlpatterns += [
 urlpatterns += [
     path("<int:hash_pk>/hashtag/", views.hashtag, name="hashtag"),
 ]
+
+urlpatterns += [
+  path('search/', views.SearchFormView.as_view(), name='search'),
+]

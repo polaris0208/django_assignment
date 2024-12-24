@@ -43,3 +43,6 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = "__all__"
         exclude = ("products", "user", "product_name")
+
+class SearchForm(forms.Form):
+    search_word = forms.CharField(label="Search Word")
