@@ -18,9 +18,9 @@
     <a href="{% url "products:products" %}">
       <p>Products</p>
 
-    {% comment %} <a href= "{% url "products:search" %}">
+    <a href= "{% url "products:search" %}">
       <p>Search</p>
-    </a> {% endcomment %}
+    </a>
 
     {% if request.user.is_authenticated %}
 
