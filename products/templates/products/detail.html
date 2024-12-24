@@ -8,9 +8,14 @@
 <h3>[{{ products.pk }}] {{ products.title }}</h3>
 <p> {{ products.author.username }}
 <p>{{ products.product_name }}</p>
-<p>{{ products.price }}</p>
-<p>{{ products.quantity }}</p>
-<p>{{ products.like_user.all | length }}</p>
+<p>{{ products.price }} | {{ products.quantity }}</p>
+<p>{{ products.like_user_counter }} | {{ products.view_counter }}</p>
+<div style="display: flex; gap: 20px;">
+{% for tag in products.hashtags.all %}
+  <p>{{ tag|hashtag_link|safe }}</p>
+{% endfor %}
+</div>
+
 
 <br><hr>
 
@@ -18,8 +23,8 @@
     <img src="{{ products.image.url }}">
 {% endif %}
 
-{% comment %} <p>{{ products.content }}</p> {% endcomment %}
-<p>{{ products|hashtag_link|safe }}</p>
+<p>{{ products.content }}</p>
+{% comment %} <p>{{ products|hashtag_link|safe }}</p> {% endcomment %}
 <p>{{ products.created_at }}</p>
 
 {% if user == products.author  %}
