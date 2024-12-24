@@ -5,11 +5,23 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST, require_http_methods
 from django.views.generic import FormView
 from django.db.models import Q
+from django.db.models import Count
 
 
 def products(request):
-    products = Products.objects.all().order_by("-created_at")
-    context = {"products": products}
+    sort = request.GET.get('sort', 'date')  # 기본값은 날짜순으로 설정
+    if sort == 'likes':
+        products = Products.objects.annotate(like_count=Count('like_user')).order_by('-like_count', '-created_at')  # 좋아요 순으로 정렬
+    elif sort == 'comments':
+        products = Products.objects.annotate(comment_count=Count('comments')).order_by('-comment_count', '-created_at')  # 댓글 순으로 정렬
+    else:  
+        products = Products.objects.all().order_by('-created_at')  # 날짜 순으로 정렬
+
+    context = {
+        'products': products,
+    }
+    # products = Products.objects.all().order_by("-created_at")
+    # context = {"products": products}
     return render(request, "products/products.html", context)
 
 

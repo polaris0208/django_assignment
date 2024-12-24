@@ -7,6 +7,12 @@
   <a href="{% url 'accounts:login' %}"><button>작성하기</button></a>
 {% endif %}
 
+<p>
+  <a href="?sort=date">날짜순 | </a> 
+  <a href="?sort=likes">인기순 | </a>
+  <a href="?sort=comments">댓글순</a>
+</p>
+
 {% for product in products %}
   <a href="{% url 'products:detail' product.pk %}">
       <p>[{{ product.pk }}] {{ product.title }}</p>
