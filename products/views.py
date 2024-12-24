@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Products, Comment, HashTag
-from .forms import ProductsForm, CommentForm
+from .forms import ProductsForm, CommentForm, SearchForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST, require_http_methods
+from django.views.generic import FormView
+from django.db.models import Q
 
 
 def products(request):
@@ -110,3 +112,24 @@ def hashtag(request, hash_pk):
         "products": products,
     }
     return render(request, "products/hashtag.html", context)
+
+
+class SearchFormView(FormView):
+    form_class = SearchForm
+    template_name = "products/search.html"
+
+    def form_valid(self, form):
+        searchWord = form.cleaned_data["search_word"]
+        products_list = Products.objects.filter(
+            Q(title__icontains=searchWord)
+            | Q(product_name__icontains=searchWord)
+            | Q(content__icontains=searchWord)
+        ).distinct()
+
+        context = {
+            "form": form,
+            "searchWord": searchWord,
+            "products_list": products_list,
+        }
+
+        return render(self.request, "products/search.html", context)

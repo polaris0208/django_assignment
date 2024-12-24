@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Product Search</h1>
+<br>
+
+<form action="." method="post"> {% csrf_token %}
+    {{ form.as_table }}
+    <input type="submit" value="Search" class="btn btn-primary btn-sm">
+</form>
+
+<br/><br/>
+
+{% if products_list %}
+    {% for product in products_list %}
+        <h2><a href="{% url "products:detail" product.pk %}">{{ product.title }}</a></h2>
+        {{ product.modify_date|date:"N d, Y" }}
+        <p>{{ product.content }}</p>
+    {% endfor %}
+{% elif searchWord %}
+    <b><i>Search Word : "{{ searchWord }}" Not Found</i></b>
+{% endif %}
+{% endblock %}
