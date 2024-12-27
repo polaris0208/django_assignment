@@ -61,6 +61,7 @@ python manage.py runserver
   - 검색 기능
   - 정렬 기능
   - 해시태그로 조회 기능
+- 댓글 기능
 
 ### 프로젝트 구조
 
@@ -104,6 +105,9 @@ django_assignment/
     - **1:N** : 하나의 상품에 여러 댓글이 있을 수 있음
   - **Products ↔ HashTag**
     - **M:N** : 여러 해시태그와 여러 상품이 연결될 수 있음
+
+### 프로젝트 진행 과정
+![진행 과정](/readme_assets/log.png)
 
 ## 프로젝트 기본 설정
 
@@ -873,7 +877,101 @@ urlpatterns += [
 
 # 트러블 슈팅
 
-## 프로젝트 진행 과정
-![진행 과정](/readme_assets/log.png)
+## 1. url 수정/추가 문제
+
+### 문제
+> 기능이 개발되는 과정에서 사용하는 **url**이 많아지고 수정하기 어려워지는 문제
+
+### 해결
+
+#### 복합 대입 연산자 활용
+- 새로 추가되는 **url** 분리하여 관리
+
+```py
+urlpatterns = [
+    path('admin/', admin.site.urls),
+]
+
+urlpatterns += [
+  path('users/', include('users.urls'))
+]
+```
 
 
+## 2. 제외한 필드 저장문제
+
+### 문제
+> 별도의 로직으로 작성되는 필드 제외하는 과정에서 오류 발생
+
+### 해결
+
+#### 저장 로직 수정
+- 작성자, 해시태그는 `commit=False` 처리 후 추가
+
+```py
+def save(self, commit=True):
+        product = super().save(commit=False)
+
+        if self.user:
+            product.user = self.user
+            product.author = self.user
+
+        if commit:
+            product.save()
+
+        hashtags_input = self.cleaned_data.get("hashtags_str", "")
+        hashtag_list = [h for h in hashtags_input.replace(",", " ").split() if h]
+        new_hashtags = []
+        for ht in hashtag_list:
+            ht_obj, created = HashTag.objects.get_or_create(name=ht)
+            new_hashtags.append(ht_obj)
+        product.hashtags.set(new_hashtags)
+
+        if not commit:
+            product.save()
+
+        return productath('users/', include('users.urls'))
+```
+
+## 3. 정렬 기능
+
+### 문제
+> 데이터베이스의 `group by` 쿼리는 파이썬, **Django**에서 지원하지 않음
+
+### 해결
+
+#### ORM, `annotate` 사용
+- 집계함수를 적용하여 호출한 후 정렬 수행
+
+```py
+products = Products.objects.annotate(
+    like_count=Count('like_user')).order_by(
+        '-like_count', '-created_at'
+        )
+```
+
+## 4. 모델 수정 후 테스트 절차의 번거로움
+
+### 문제
+> 모델이 수정될 때마다 **DB** 초기화, `migrate` , 계정 생성, 게시물 작성 등의 작업에 시간 소요
+
+### 해결
+
+#### Docker 사용
+- `migrate`, `createsuperuser`, `seed`생성까지 자동수행
+
+```yml
+    ...
+    environment:
+      DJANGO_SUPERUSER_USERNAME: admin
+      DJANGO_SUPERUSER_EMAIL: admin@example.com
+      DJANGO_SUPERUSER_PASSWORD: password
+    command: >
+      sh -c "
+      python manage.py makemigrations &&
+      python manage.py migrate &&
+      python manage.py createsuperuser --noinput || true &&
+      python manage.py seed products --number=30 --seeder 'Products.author_id' 1 &&
+      python manage.py runserver 0.0.0.0:8000
+      "
+```
